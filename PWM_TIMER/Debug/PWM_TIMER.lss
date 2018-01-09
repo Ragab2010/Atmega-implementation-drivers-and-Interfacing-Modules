@@ -1,0 +1,148 @@
+
+PWM_TIMER.elf:     file format elf32-avr
+
+Sections:
+Idx Name          Size      VMA       LMA       File off  Algn
+  0 .text         000000e4  00000000  00000000  00000054  2**1
+                  CONTENTS, ALLOC, LOAD, READONLY, CODE
+  1 .stab         0000039c  00000000  00000000  00000138  2**2
+                  CONTENTS, READONLY, DEBUGGING
+  2 .stabstr      000006ca  00000000  00000000  000004d4  2**0
+                  CONTENTS, READONLY, DEBUGGING
+
+Disassembly of section .text:
+
+00000000 <__vectors>:
+   0:	0c 94 2a 00 	jmp	0x54	; 0x54 <__ctors_end>
+   4:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+   8:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+   c:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  10:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  14:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  18:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  1c:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  20:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  24:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  28:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  2c:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  30:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  34:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  38:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  3c:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  40:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  44:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  48:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  4c:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  50:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+
+00000054 <__ctors_end>:
+  54:	11 24       	eor	r1, r1
+  56:	1f be       	out	0x3f, r1	; 63
+  58:	cf e5       	ldi	r28, 0x5F	; 95
+  5a:	d4 e0       	ldi	r29, 0x04	; 4
+  5c:	de bf       	out	0x3e, r29	; 62
+  5e:	cd bf       	out	0x3d, r28	; 61
+  60:	0e 94 68 00 	call	0xd0	; 0xd0 <main>
+  64:	0c 94 70 00 	jmp	0xe0	; 0xe0 <_exit>
+
+00000068 <__bad_interrupt>:
+  68:	0c 94 00 00 	jmp	0	; 0x0 <__vectors>
+
+0000006c <TIMER0_init_pwm>:
+ *  Created on: ??þ/??þ/????
+ *      Author: RAGAB
+ */
+#include "avr/io.h"
+
+void TIMER0_init_pwm(unsigned char duty_cycle){
+  6c:	df 93       	push	r29
+  6e:	cf 93       	push	r28
+  70:	0f 92       	push	r0
+  72:	cd b7       	in	r28, 0x3d	; 61
+  74:	de b7       	in	r29, 0x3e	; 62
+  76:	89 83       	std	Y+1, r24	; 0x01
+	/* using non-inverted mode, Write a program that generates a
+		wave with frequency of 31,250 Hz and duty cycle of75%.-
+		31.250HZ = (8*10^6)/(N * 256)  then N=1 no prescaller
+	*/
+	DDRB |=(1<<PB3);
+  78:	a7 e3       	ldi	r26, 0x37	; 55
+  7a:	b0 e0       	ldi	r27, 0x00	; 0
+  7c:	e7 e3       	ldi	r30, 0x37	; 55
+  7e:	f0 e0       	ldi	r31, 0x00	; 0
+  80:	80 81       	ld	r24, Z
+  82:	88 60       	ori	r24, 0x08	; 8
+  84:	8c 93       	st	X, r24
+	OCR0 = duty_cycle;
+  86:	ec e5       	ldi	r30, 0x5C	; 92
+  88:	f0 e0       	ldi	r31, 0x00	; 0
+  8a:	89 81       	ldd	r24, Y+1	; 0x01
+  8c:	80 83       	st	Z, r24
+	TCCR0  =(1<<WGM01) |(1<<WGM00)|(1<<COM01)|(1<<CS00);
+  8e:	e3 e5       	ldi	r30, 0x53	; 83
+  90:	f0 e0       	ldi	r31, 0x00	; 0
+  92:	89 e6       	ldi	r24, 0x69	; 105
+  94:	80 83       	st	Z, r24
+
+}
+  96:	0f 90       	pop	r0
+  98:	cf 91       	pop	r28
+  9a:	df 91       	pop	r29
+  9c:	08 95       	ret
+
+0000009e <TIMER0_init_pwm_phaseCorrect>:
+void TIMER0_init_pwm_phaseCorrect(unsigned char duty_cycle){
+  9e:	df 93       	push	r29
+  a0:	cf 93       	push	r28
+  a2:	0f 92       	push	r0
+  a4:	cd b7       	in	r28, 0x3d	; 61
+  a6:	de b7       	in	r29, 0x3e	; 62
+  a8:	89 83       	std	Y+1, r24	; 0x01
+	/* using non-inverted.mode, Write api:o~ ~t geeerates a
+		wave with frequency of 15.,686Hz and
+		duty cycle Of 75%  then N=1 no prescaller
+	*/
+	DDRB |=(1<<PB3);
+  aa:	a7 e3       	ldi	r26, 0x37	; 55
+  ac:	b0 e0       	ldi	r27, 0x00	; 0
+  ae:	e7 e3       	ldi	r30, 0x37	; 55
+  b0:	f0 e0       	ldi	r31, 0x00	; 0
+  b2:	80 81       	ld	r24, Z
+  b4:	88 60       	ori	r24, 0x08	; 8
+  b6:	8c 93       	st	X, r24
+	OCR0 = duty_cycle;
+  b8:	ec e5       	ldi	r30, 0x5C	; 92
+  ba:	f0 e0       	ldi	r31, 0x00	; 0
+  bc:	89 81       	ldd	r24, Y+1	; 0x01
+  be:	80 83       	st	Z, r24
+	TCCR0  =(1<<WGM00) |(1<<COM01)|(1<<COM00)|(1<<CS00); //|(1<<WGM01)
+  c0:	e3 e5       	ldi	r30, 0x53	; 83
+  c2:	f0 e0       	ldi	r31, 0x00	; 0
+  c4:	81 e7       	ldi	r24, 0x71	; 113
+  c6:	80 83       	st	Z, r24
+
+}
+  c8:	0f 90       	pop	r0
+  ca:	cf 91       	pop	r28
+  cc:	df 91       	pop	r29
+  ce:	08 95       	ret
+
+000000d0 <main>:
+
+
+int main(){
+  d0:	df 93       	push	r29
+  d2:	cf 93       	push	r28
+  d4:	cd b7       	in	r28, 0x3d	; 61
+  d6:	de b7       	in	r29, 0x3e	; 62
+
+	TIMER0_init_pwm(0); // 75% equal to  ((75*256)-1)/100  =191
+  d8:	80 e0       	ldi	r24, 0x00	; 0
+  da:	0e 94 36 00 	call	0x6c	; 0x6c <TIMER0_init_pwm>
+  de:	ff cf       	rjmp	.-2      	; 0xde <main+0xe>
+
+000000e0 <_exit>:
+  e0:	f8 94       	cli
+
+000000e2 <__stop_program>:
+  e2:	ff cf       	rjmp	.-2      	; 0xe2 <__stop_program>

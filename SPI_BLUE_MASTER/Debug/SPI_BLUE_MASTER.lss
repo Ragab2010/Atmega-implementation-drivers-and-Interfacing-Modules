@@ -1,0 +1,283 @@
+
+SPI_BLUE_MASTER.elf:     file format elf32-avr
+
+Sections:
+Idx Name          Size      VMA       LMA       File off  Algn
+  0 .text         000001aa  00000000  00000000  00000054  2**1
+                  CONTENTS, ALLOC, LOAD, READONLY, CODE
+  1 .stab         00000504  00000000  00000000  00000200  2**2
+                  CONTENTS, READONLY, DEBUGGING
+  2 .stabstr      00000720  00000000  00000000  00000704  2**0
+                  CONTENTS, READONLY, DEBUGGING
+
+Disassembly of section .text:
+
+00000000 <__vectors>:
+   0:	0c 94 2a 00 	jmp	0x54	; 0x54 <__ctors_end>
+   4:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+   8:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+   c:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  10:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  14:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  18:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  1c:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  20:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  24:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  28:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  2c:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  30:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  34:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  38:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  3c:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  40:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  44:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  48:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  4c:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  50:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+
+00000054 <__ctors_end>:
+  54:	11 24       	eor	r1, r1
+  56:	1f be       	out	0x3f, r1	; 63
+  58:	cf e5       	ldi	r28, 0x5F	; 95
+  5a:	d4 e0       	ldi	r29, 0x04	; 4
+  5c:	de bf       	out	0x3e, r29	; 62
+  5e:	cd bf       	out	0x3d, r28	; 61
+  60:	0e 94 a4 00 	call	0x148	; 0x148 <main>
+  64:	0c 94 d3 00 	jmp	0x1a6	; 0x1a6 <_exit>
+
+00000068 <__bad_interrupt>:
+  68:	0c 94 00 00 	jmp	0	; 0x0 <__vectors>
+
+0000006c <SPI_initMaster>:
+#define STOP  'T'
+
+#define MOTOR1_FORWOARD 'A'
+#define MOTOR1_REVERSE 'B'
+
+void SPI_initMaster(){
+  6c:	df 93       	push	r29
+  6e:	cf 93       	push	r28
+  70:	cd b7       	in	r28, 0x3d	; 61
+  72:	de b7       	in	r29, 0x3e	; 62
+	DDRB |=(1<<PB4)|(1<<PB5)|(1<<PB7);
+  74:	a7 e3       	ldi	r26, 0x37	; 55
+  76:	b0 e0       	ldi	r27, 0x00	; 0
+  78:	e7 e3       	ldi	r30, 0x37	; 55
+  7a:	f0 e0       	ldi	r31, 0x00	; 0
+  7c:	80 81       	ld	r24, Z
+  7e:	80 6b       	ori	r24, 0xB0	; 176
+  80:	8c 93       	st	X, r24
+	DDRB &=~(1<<PB6);
+  82:	a7 e3       	ldi	r26, 0x37	; 55
+  84:	b0 e0       	ldi	r27, 0x00	; 0
+  86:	e7 e3       	ldi	r30, 0x37	; 55
+  88:	f0 e0       	ldi	r31, 0x00	; 0
+  8a:	80 81       	ld	r24, Z
+  8c:	8f 7b       	andi	r24, 0xBF	; 191
+  8e:	8c 93       	st	X, r24
+	SPCR |=(1<<SPE)|(1<<MSTR);
+  90:	ad e2       	ldi	r26, 0x2D	; 45
+  92:	b0 e0       	ldi	r27, 0x00	; 0
+  94:	ed e2       	ldi	r30, 0x2D	; 45
+  96:	f0 e0       	ldi	r31, 0x00	; 0
+  98:	80 81       	ld	r24, Z
+  9a:	80 65       	ori	r24, 0x50	; 80
+  9c:	8c 93       	st	X, r24
+}
+  9e:	cf 91       	pop	r28
+  a0:	df 91       	pop	r29
+  a2:	08 95       	ret
+
+000000a4 <SPI_initSalve>:
+void SPI_initSalve(){
+  a4:	df 93       	push	r29
+  a6:	cf 93       	push	r28
+  a8:	cd b7       	in	r28, 0x3d	; 61
+  aa:	de b7       	in	r29, 0x3e	; 62
+	DDRB &=~((1<<PB4)|(1<<PB5)|(1<<PB7));
+  ac:	a7 e3       	ldi	r26, 0x37	; 55
+  ae:	b0 e0       	ldi	r27, 0x00	; 0
+  b0:	e7 e3       	ldi	r30, 0x37	; 55
+  b2:	f0 e0       	ldi	r31, 0x00	; 0
+  b4:	80 81       	ld	r24, Z
+  b6:	8f 74       	andi	r24, 0x4F	; 79
+  b8:	8c 93       	st	X, r24
+	DDRB |=(1<<PB6);
+  ba:	a7 e3       	ldi	r26, 0x37	; 55
+  bc:	b0 e0       	ldi	r27, 0x00	; 0
+  be:	e7 e3       	ldi	r30, 0x37	; 55
+  c0:	f0 e0       	ldi	r31, 0x00	; 0
+  c2:	80 81       	ld	r24, Z
+  c4:	80 64       	ori	r24, 0x40	; 64
+  c6:	8c 93       	st	X, r24
+	SPCR |=(1<<SPE);
+  c8:	ad e2       	ldi	r26, 0x2D	; 45
+  ca:	b0 e0       	ldi	r27, 0x00	; 0
+  cc:	ed e2       	ldi	r30, 0x2D	; 45
+  ce:	f0 e0       	ldi	r31, 0x00	; 0
+  d0:	80 81       	ld	r24, Z
+  d2:	80 64       	ori	r24, 0x40	; 64
+  d4:	8c 93       	st	X, r24
+}
+  d6:	cf 91       	pop	r28
+  d8:	df 91       	pop	r29
+  da:	08 95       	ret
+
+000000dc <SPI_sendByte>:
+
+void SPI_sendByte(unsigned char byte){
+  dc:	df 93       	push	r29
+  de:	cf 93       	push	r28
+  e0:	0f 92       	push	r0
+  e2:	cd b7       	in	r28, 0x3d	; 61
+  e4:	de b7       	in	r29, 0x3e	; 62
+  e6:	89 83       	std	Y+1, r24	; 0x01
+	SPDR = byte;
+  e8:	ef e2       	ldi	r30, 0x2F	; 47
+  ea:	f0 e0       	ldi	r31, 0x00	; 0
+  ec:	89 81       	ldd	r24, Y+1	; 0x01
+  ee:	80 83       	st	Z, r24
+	while(!(SPSR & (1<<SPIF)));
+  f0:	ee e2       	ldi	r30, 0x2E	; 46
+  f2:	f0 e0       	ldi	r31, 0x00	; 0
+  f4:	80 81       	ld	r24, Z
+  f6:	88 23       	and	r24, r24
+  f8:	dc f7       	brge	.-10     	; 0xf0 <SPI_sendByte+0x14>
+}
+  fa:	0f 90       	pop	r0
+  fc:	cf 91       	pop	r28
+  fe:	df 91       	pop	r29
+ 100:	08 95       	ret
+
+00000102 <SPI_recieveByte>:
+unsigned char SPI_recieveByte(){
+ 102:	df 93       	push	r29
+ 104:	cf 93       	push	r28
+ 106:	cd b7       	in	r28, 0x3d	; 61
+ 108:	de b7       	in	r29, 0x3e	; 62
+	while(!(SPSR & (1<<SPIF)));
+ 10a:	ee e2       	ldi	r30, 0x2E	; 46
+ 10c:	f0 e0       	ldi	r31, 0x00	; 0
+ 10e:	80 81       	ld	r24, Z
+ 110:	88 23       	and	r24, r24
+ 112:	dc f7       	brge	.-10     	; 0x10a <SPI_recieveByte+0x8>
+	return SPDR;
+ 114:	ef e2       	ldi	r30, 0x2F	; 47
+ 116:	f0 e0       	ldi	r31, 0x00	; 0
+ 118:	80 81       	ld	r24, Z
+
+}
+ 11a:	cf 91       	pop	r28
+ 11c:	df 91       	pop	r29
+ 11e:	08 95       	ret
+
+00000120 <spi_tranceiver>:
+unsigned char  spi_tranceiver (unsigned char data)
+{
+ 120:	df 93       	push	r29
+ 122:	cf 93       	push	r28
+ 124:	0f 92       	push	r0
+ 126:	cd b7       	in	r28, 0x3d	; 61
+ 128:	de b7       	in	r29, 0x3e	; 62
+ 12a:	89 83       	std	Y+1, r24	; 0x01
+
+	SPDR=data;
+ 12c:	ef e2       	ldi	r30, 0x2F	; 47
+ 12e:	f0 e0       	ldi	r31, 0x00	; 0
+ 130:	89 81       	ldd	r24, Y+1	; 0x01
+ 132:	80 83       	st	Z, r24
+	while(!(SPSR & (1<<SPIF)));
+ 134:	ee e2       	ldi	r30, 0x2E	; 46
+ 136:	f0 e0       	ldi	r31, 0x00	; 0
+ 138:	80 81       	ld	r24, Z
+ 13a:	88 23       	and	r24, r24
+ 13c:	dc f7       	brge	.-10     	; 0x134 <spi_tranceiver+0x14>
+
+	return data;
+ 13e:	89 81       	ldd	r24, Y+1	; 0x01
+
+}
+ 140:	0f 90       	pop	r0
+ 142:	cf 91       	pop	r28
+ 144:	df 91       	pop	r29
+ 146:	08 95       	ret
+
+00000148 <main>:
+
+int main(void)
+{
+ 148:	df 93       	push	r29
+ 14a:	cf 93       	push	r28
+ 14c:	00 d0       	rcall	.+0      	; 0x14e <main+0x6>
+ 14e:	cd b7       	in	r28, 0x3d	; 61
+ 150:	de b7       	in	r29, 0x3e	; 62
+	SPI_initMaster();
+ 152:	0e 94 36 00 	call	0x6c	; 0x6c <SPI_initMaster>
+	DDRC = 0x00;                                 //Initialize PORTA as INPUT
+ 156:	e4 e3       	ldi	r30, 0x34	; 52
+ 158:	f0 e0       	ldi	r31, 0x00	; 0
+ 15a:	10 82       	st	Z, r1
+
+	unsigned char data;
+	unsigned char q=0;
+ 15c:	19 82       	std	Y+1, r1	; 0x01
+
+	/* Replace with your application code */
+
+
+	data = spi_tranceiver(START);   //send start recive data
+ 15e:	83 e5       	ldi	r24, 0x53	; 83
+ 160:	0e 94 90 00 	call	0x120	; 0x120 <spi_tranceiver>
+ 164:	8a 83       	std	Y+2, r24	; 0x02
+
+
+	while (1)
+	{
+
+		if ((PINC &(1<<PC0)))
+ 166:	e3 e3       	ldi	r30, 0x33	; 51
+ 168:	f0 e0       	ldi	r31, 0x00	; 0
+ 16a:	80 81       	ld	r24, Z
+ 16c:	88 2f       	mov	r24, r24
+ 16e:	90 e0       	ldi	r25, 0x00	; 0
+ 170:	81 70       	andi	r24, 0x01	; 1
+ 172:	90 70       	andi	r25, 0x00	; 0
+ 174:	88 23       	and	r24, r24
+ 176:	b9 f3       	breq	.-18     	; 0x166 <main+0x1e>
+		{
+			if(q==0){
+ 178:	89 81       	ldd	r24, Y+1	; 0x01
+ 17a:	88 23       	and	r24, r24
+ 17c:	31 f4       	brne	.+12     	; 0x18a <main+0x42>
+				spi_tranceiver(MOTOR1_FORWOARD);
+ 17e:	81 e4       	ldi	r24, 0x41	; 65
+ 180:	0e 94 90 00 	call	0x120	; 0x120 <spi_tranceiver>
+				q=1;
+ 184:	81 e0       	ldi	r24, 0x01	; 1
+ 186:	89 83       	std	Y+1, r24	; 0x01
+ 188:	04 c0       	rjmp	.+8      	; 0x192 <main+0x4a>
+				}
+				else{
+				spi_tranceiver(MOTOR1_REVERSE);
+ 18a:	82 e4       	ldi	r24, 0x42	; 66
+ 18c:	0e 94 90 00 	call	0x120	; 0x120 <spi_tranceiver>
+				q=0;
+ 190:	19 82       	std	Y+1, r1	; 0x01
+			}
+			while((PINC &(1<<PC0)));
+ 192:	e3 e3       	ldi	r30, 0x33	; 51
+ 194:	f0 e0       	ldi	r31, 0x00	; 0
+ 196:	80 81       	ld	r24, Z
+ 198:	88 2f       	mov	r24, r24
+ 19a:	90 e0       	ldi	r25, 0x00	; 0
+ 19c:	81 70       	andi	r24, 0x01	; 1
+ 19e:	90 70       	andi	r25, 0x00	; 0
+ 1a0:	88 23       	and	r24, r24
+ 1a2:	b9 f7       	brne	.-18     	; 0x192 <main+0x4a>
+ 1a4:	e0 cf       	rjmp	.-64     	; 0x166 <main+0x1e>
+
+000001a6 <_exit>:
+ 1a6:	f8 94       	cli
+
+000001a8 <__stop_program>:
+ 1a8:	ff cf       	rjmp	.-2      	; 0x1a8 <__stop_program>

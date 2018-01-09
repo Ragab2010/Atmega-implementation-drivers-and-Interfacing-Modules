@@ -1,0 +1,1 @@
+MASTER.o MASTER.o: ../MASTER.c
